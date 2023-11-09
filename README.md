@@ -2,6 +2,12 @@
 Useful one line Bash/Python/etc commands
 
 
+bash loop
+```bash
+while read in; do echo $in; done < file.txt # for each line in file
+```
+
+
 parse ldapdomaindump output
 ```bash
 # domain_users.grep
