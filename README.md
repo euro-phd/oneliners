@@ -52,3 +52,26 @@ parse nmap ssh-audit script output
 
 cat ssh.nmap | grep -i -e 'Nmap scan report for' -e 'arcfour128' -e 'arcfour256' -e '3des-cbc' -e 'aes128-cbc' -e 'aes192-cbc' -e 'aes256-cbc' -e 'blowfish-cbc' -e 'cast128-cbc' # grep weak ciphers per ip
 ```
+
+parse AndroidManifest.xml for BROWSABLE activities
+```bash
+# 
+xmllint --xpath "//category[@*='android.intent.category.BROWSABLE']/parent::node()/parent::node()/@*[local-name()='name']" AndroidManifest.xml
+```
+
+find providers where either `readPermission` or `writePermission` is set
+```bash
+for app in $(find . -maxdepth 3 -name "AndroidManifest.xml"); do xmllint $app | tr '[:upper:]' '[:lower:]' | grep 'exported="true"'|awk 'xor(/readpermission/,/writepermission/)'| grep --color -e "readpermission" -e "writepermission" && echo "===$app===" ; done
+```
+
+semi-useful bash functions to get `base.apk` for packages
+```bash
+# add to /etc/profile or .bashrc
+adb_pull (){
+    adb pull $(adb shell pm path "$1" | head -n1 | awk -F: '{print $2}') "$1.apk"
+}
+
+adb_pull_all (){
+    for app in $(adb shell pm list packages | awk -F: '{print $2}'); do adb_pull $app; done
+}
+```
